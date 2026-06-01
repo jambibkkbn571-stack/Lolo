@@ -1,0 +1,1123 @@
+`<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Top-Up Tycoon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B0F19',
+                            card: '#151D30',
+                            accent: '#10B981', // Emerald Green
+                            purple: '#8B5CF6', // Neon Purple
+                            gold: '#F59E0B',   // Amber Gold
+                            danger: '#EF4444', // Red
+                            shopee: '#FF5722'  // Shopee Orange
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B0F19;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+        .neo-shadow {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+        .neo-shadow-purple {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        /* Glow animation */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        .glow-effect {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-accent selection:text-black">
+
+    <!-- TOP BAR / HEADER -->
+    <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-brand-accent to-brand-purple p-2.5 rounded-xl shadow-lg shadow-brand-accent/20">
+                    <i class="fa-solid fa-gamepad text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-brand-accent via-emerald-400 to-brand-purple bg-clip-text text-transparent">
+                        TOP-UP TYCOON
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Build Your Digital Gaming Empire</p>
+                </div>
+            </div>
+
+            <!-- Stats & Action Bar -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 text-sm font-mono w-full lg:w-auto">
+                <!-- Saldo / Cash -->
+                <div class="bg-slate-900 border border-emerald-500/20 px-3 py-1.5 rounded-xl flex items-center gap-2.5 shadow-inner">
+                    <i class="fa-solid fa-wallet text-brand-accent text-base"></i>
+                    <div>
+                        <span class="text-[9px] text-slate-400 block uppercase tracking-wider leading-none">Saldo Tunai</span>
+                        <span id="stat-cash" class="text-brand-accent text-sm sm:text-base font-bold">Rp 5.000.000</span>
+                    </div>
+                </div>
+
+                <!-- NEW: Top-up Saldo Button -->
+                <button onclick="openDepositModal()" class="bg-brand-shopee hover:bg-orange-600 text-white font-sans font-bold text-xs px-3 py-2.5 rounded-xl transition duration-200 flex items-center gap-2 shadow-lg shadow-orange-600/20">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <span>Isi Saldo</span>
+                </button>
+
+                <!-- Reputasi -->
+                <div class="bg-slate-900 border border-purple-500/20 px-3 py-1.5 rounded-xl flex items-center gap-2.5 shadow-inner">
+                    <i class="fa-solid fa-star text-brand-purple text-base"></i>
+                    <div>
+                        <span class="text-[9px] text-slate-400 block uppercase tracking-wider leading-none">Reputasi Toko</span>
+                        <span id="stat-reputation" class="text-brand-purple text-sm sm:text-base font-bold">★ 1.0</span>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <button onclick="resetGame()" class="bg-slate-800/85 hover:bg-red-500/10 hover:text-red-400 border border-slate-700 hover:border-red-500/30 px-3 py-2.5 rounded-xl transition duration-200 text-slate-400 flex items-center gap-1.5" title="Mulai Ulang Game">
+                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                    <span class="text-xs font-sans font-semibold">Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-7xl mx-auto p-4 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+        
+        <!-- COLUMN LEFT: LIVE MARKET & STOCK INVENTORY (4 Cols) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- LIVE MARKET PRICES -->
+            <div class="bg-brand-card border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+                        </span>
+                        <h2 class="text-md font-bold text-slate-200 tracking-wide">Harga Pasar Supplier</h2>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono bg-slate-900/60 px-2 py-1 rounded border border-slate-800">
+                        Update: <span id="market-timer">10s</span>
+                    </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">Beli stok saat harga turun (hijau) dan jual ke pelanggan dengan margin tinggi!</p>
+
+                <!-- Commodities Grid -->
+                <div class="space-y-3" id="market-list">
+                    <!-- Dynamic Market Cards injected here -->
+                </div>
+            </div>
+
+            <!-- INVENTORY STOCK -->
+            <div class="bg-brand-card border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-brand-purple"></i>
+                        Gudang Stok Digital
+                    </h2>
+                    <span class="text-xs font-mono bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded-full border border-brand-purple/20" id="inventory-capacity">
+                        Stok: 0/100
+                    </span>
+                </div>
+
+                <div class="space-y-3" id="inventory-list">
+                    <!-- Dynamic Inventory Cards injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN CENTER: TRANSACTION QUEUE & ACTIONS (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- TICKER BOARD / LIVE NEWS -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 flex items-center gap-3">
+                <div class="bg-brand-gold/10 text-brand-gold border border-brand-gold/20 px-2 py-0.5 rounded text-xs font-bold font-mono tracking-widest animate-pulse">
+                    BERITA
+                </div>
+                <div class="overflow-hidden relative w-full h-5">
+                    <div id="news-ticker" class="absolute w-full text-xs font-medium text-slate-300 transition-all duration-500 ease-in-out">
+                        Mulai bisnis top-up gaming kamu sekarang. Layani pembeli dengan cepat!
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTION CORNER (PELANGGAN DATANG) -->
+            <div class="bg-brand-card border border-slate-800 rounded-2xl p-5 shadow-xl relative flex-grow flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-brand-accent"></i>
+                        Antrean Pelanggan <span class="bg-slate-800 text-xs text-slate-400 px-2 py-0.5 rounded-full" id="queue-count">0</span>
+                    </h2>
+                    <div class="text-xs font-medium px-2 py-1 rounded bg-emerald-500/10 text-brand-accent border border-brand-accent/20 flex items-center gap-1.5" id="auto-seller-badge">
+                        <i class="fa-solid fa-robot"></i> Bot Auto-Process Nonaktif
+                    </div>
+                </div>
+
+                <!-- Customer Cards Area -->
+                <div class="flex-grow flex flex-col justify-center items-center gap-4 py-6" id="customer-area">
+                    <!-- Dynamic Customer card will be injected here -->
+                    <!-- Empty State -->
+                    <div class="text-center py-10 text-slate-500 max-w-xs" id="empty-customers">
+                        <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-800 text-2xl">
+                            <i class="fa-solid fa-hourglass-start animate-spin text-slate-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-400 text-sm">Menunggu Pelanggan Baru...</h3>
+                        <p class="text-xs mt-1 text-slate-500">Reputasi yang tinggi dan upgrade promosi akan mendatangkan pelanggan lebih cepat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN RIGHT: UPGRADES & SHOP BOOSTS (3 Cols) -->
+        <div class="lg:col-span-3 flex flex-col gap-6">
+            
+            <!-- LEADERBOARD / STATS BONUS -->
+            <div class="bg-brand-card border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h2 class="text-md font-bold text-slate-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-brand-gold"></i>
+                    Statistik Bisnis
+                </h2>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-0.5">Sukses</span>
+                        <span class="text-base font-bold text-slate-200 font-mono" id="stat-sales-count">0</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-0.5">Pendapatan</span>
+                        <span class="text-base font-bold text-brand-accent font-mono" id="stat-revenue">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPGRADE SHOP -->
+            <div class="bg-brand-card border border-slate-800 rounded-2xl p-5 shadow-xl flex-grow">
+                <h2 class="text-md font-bold text-slate-200 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-dots text-brand-accent"></i>
+                    Ekspansi & Upgrade
+                </h2>
+                <p class="text-xs text-slate-400 mb-4">Investasikan uangmu untuk mempermudah bisnis.</p>
+                
+                <div class="space-y-4" id="upgrades-list">
+                    <!-- Dynamic Upgrade Cards injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER & NOTIFICATION BRIDGE -->
+    <footer class="border-t border-slate-800 bg-brand-dark/90 py-4 px-4 text-center text-xs text-slate-500 mt-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <p>© 2026 The Ultimate Top-Up Tycoon. Designed for Master Coders. Enjoy the Course!</p>
+            <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-brand-accent"></i> Engine Active</span>
+                <span class="text-slate-600">|</span>
+                <span>V1.3 Premium Edition</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- IN-GAME NOTIFICATION TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full px-4"></div>
+
+    <!-- NOTIFICATION AUDIO CRASH-GUARD / STANDARD MODAL -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <div id="modal-icon-container" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 text-3xl"></div>
+            <h3 id="modal-title" class="text-lg font-extrabold text-center text-white mb-2"></h3>
+            <p id="modal-desc" class="text-sm text-slate-400 text-center mb-6 leading-relaxed"></p>
+            <div class="flex justify-center">
+                <button onclick="closeModal()" class="bg-gradient-to-r from-brand-accent to-emerald-600 hover:from-emerald-400 hover:to-emerald-700 text-brand-dark font-bold px-6 py-2.5 rounded-xl transition duration-200 shadow-lg shadow-brand-accent/20">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: TOP-UP / DEPOSIT SIMULATION MODAL (SHOPEEPAY 082183684555) -->
+    <div id="deposit-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative transition-all duration-300">
+            <!-- Close Button -->
+            <button onclick="closeDepositModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Header Modal -->
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 bg-brand-shopee/10 text-brand-shopee rounded-full flex items-center justify-center mx-auto mb-3 text-2xl border border-brand-shopee/20">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <h3 class="text-lg font-extrabold text-white">Top-Up Saldo Tunai</h3>
+                <p class="text-xs text-slate-400 mt-1">Tambahkan modal kerja untuk meningkatkan performa tokomu!</p>
+            </div>
+
+            <!-- STEP 1: INPUT NOMINAL FORM -->
+            <div id="deposit-step-input">
+                <div class="mb-4">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 font-mono">Masukkan Nominal (Rp)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3.5 text-slate-500 font-extrabold text-sm">Rp</span>
+                        <input type="number" id="deposit-amount-input" placeholder="Contoh: 1.000.000" min="50000" class="w-full bg-slate-900 border border-slate-700 focus:border-brand-shopee rounded-xl py-3.5 pl-12 pr-4 text-white text-base font-bold font-mono focus:outline-none focus:ring-2 focus:ring-brand-shopee/20 transition-all duration-200">
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2">Minimal deposit dalam game ini adalah Rp 50.000</p>
+                </div>
+
+                <button onclick="goToPaymentStep()" class="w-full bg-brand-shopee hover:bg-orange-600 text-white font-extrabold py-3 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-shopee/15">
+                    Lanjutkan Pembayaran
+                </button>
+            </div>
+
+            <!-- STEP 2: PAYMENT INSTRUCTION (SHOPEEPAY INFO) -->
+            <div id="deposit-step-payment" class="hidden">
+                <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 mb-5">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase font-mono">Metode Pembayaran</span>
+                        <span class="text-xs font-bold text-brand-shopee flex items-center gap-1.5 bg-brand-shopee/10 px-2 py-0.5 rounded border border-brand-shopee/20">
+                            🟠 ShopeePay
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block uppercase font-mono">Nomor Tujuan ShopeePay</span>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-md font-bold text-slate-200 font-mono tracking-wider">082183684555</span>
+                                <button onclick="copyPaymentNumber()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-2 py-1 rounded transition">
+                                    <i class="fa-solid fa-copy mr-1"></i> Salin No
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] text-slate-500 block uppercase font-mono">Jumlah yang Harus Dibayar</span>
+                            <span class="text-lg font-extrabold text-brand-shopee font-mono mt-0.5 block" id="deposit-target-val">
+                                Rp 0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-brand-gold/5 border border-brand-gold/20 rounded-xl mb-5 text-center">
+                    <p class="text-[11px] text-brand-gold font-medium leading-relaxed">
+                        ⚠️ Kirim sesuai nominal ke ShopeePay di atas. Jika transfer sukses, klik tombol di bawah untuk verifikasi instan saldo Anda.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="resetDepositFlow()" class="bg-slate-800/80 hover:bg-slate-700 text-slate-400 font-bold py-3 rounded-xl transition text-xs">
+                        Ubah Nominal
+                    </button>
+                    <button onclick="submitPaymentVerif()" class="bg-brand-accent hover:bg-emerald-400 text-brand-dark font-extrabold py-3 rounded-xl transition text-xs shadow-lg shadow-brand-accent/20">
+                        Saya Sudah Bayar
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: LOADING / PROCESSING SIMULATION -->
+            <div id="deposit-step-processing" class="hidden py-8 text-center">
+                <div class="relative w-16 h-16 mx-auto mb-6">
+                    <!-- Circle Spinner -->
+                    <div class="w-16 h-16 rounded-full border-4 border-slate-800 border-t-brand-shopee animate-spin"></div>
+                </div>
+                <h4 class="text-sm font-extrabold text-white mb-2">Memeriksa Mutasi Otomatis...</h4>
+                <p class="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                    Sistem Gateway kami sedang mencocokkan pembayaran ShopeePay Anda. Mohon tunggu maksimal 3 detik.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // --- GAME STATE ---
+        let state = {
+            cash: 5000000,
+            reputation: 1.0,
+            salesCount: 0,
+            revenue: 0,
+            inventoryCapacity: 100,
+            inventory: {
+                diamond: 0,
+                uc: 0,
+                vp: 0,
+                steam: 0
+            },
+            prices: {
+                diamond: 80000, // Harga Dasar per 1000 DM
+                uc: 140000,   // Harga Dasar per 1000 UC
+                vp: 110000,   // Harga Dasar per 1000 VP
+                steam: 95000   // Harga Dasar per $10 Wallet
+            },
+            marketTrends: {
+                diamond: 'neutral',
+                uc: 'neutral',
+                vp: 'neutral',
+                steam: 'neutral'
+            },
+            upgrades: {
+                promosi: {
+                    level: 0,
+                    max: 5,
+                    cost: 1500000,
+                    name: "Kampanye Medsos",
+                    desc: "Meningkatkan kecepatan kedatangan pelanggan baru.",
+                    icon: "fa-solid fa-bullhorn"
+                },
+                server: {
+                    level: 0,
+                    max: 5,
+                    cost: 2500000,
+                    name: "API Server Premium",
+                    desc: "Menambah kapasitas gudang penyimpanan stok +50 per level.",
+                    icon: "fa-solid fa-server"
+                },
+                bot: {
+                    level: 0,
+                    max: 1,
+                    cost: 10000000,
+                    name: "Bot Auto-Process",
+                    desc: "Memproses transaksi pembeli secara otomatis jika stok ada.",
+                    icon: "fa-solid fa-robot"
+                }
+            },
+            customers: [],
+            customerTimer: 0,
+            marketTimer: 10
+        };
+
+        // --- DEPOSIT SYSTEM TEMP STATE ---
+        let pendingDepositAmount = 0;
+
+        // --- COMMODITY PROFILES ---
+        const itemsConfig = {
+            diamond: {
+                name: "Diamond MLBB",
+                basePrice: 80000,
+                icon: "fa-solid fa-gem text-cyan-400",
+                color: "cyan",
+                unit: "1.000 DM",
+                minPrice: 60000,
+                maxPrice: 110000
+            },
+            uc: {
+                name: "PUBG Mobile UC",
+                basePrice: 140000,
+                icon: "fa-solid fa-gun text-yellow-400",
+                color: "yellow",
+                unit: "1.500 UC",
+                minPrice: 100000,
+                maxPrice: 190000
+            },
+            vp: {
+                name: "Valorant Points",
+                basePrice: 110000,
+                icon: "fa-solid fa-shield-halved text-rose-400",
+                color: "rose",
+                unit: "1.125 VP",
+                minPrice: 85000,
+                maxPrice: 150000
+            },
+            steam: {
+                name: "Steam Wallet",
+                basePrice: 95000,
+                icon: "fa-brands fa-steam text-indigo-400",
+                color: "indigo",
+                unit: "$10 Wallet",
+                minPrice: 70000,
+                maxPrice: 130000
+            }
+        };
+
+        const randomNames = ["BudiGamer", "WibuAkut", "SultanEpic", "RianGZ", "TzyKurnia", "ChronoGIRL", "PapiGamer", "AlucardFeeder", "VaroK7", "PutriGamer", "SlayerPro", "ZeusRider"];
+        const gameNews = [
+            "⚠️ Event M6 Championship dimulai! Permintaan Diamond MLBB diprediksi melonjak drastis!",
+            "🔥 Skin baru Valorant rilis hari ini, para kolektor bersiap memborong Valorant Points!",
+            "📉 Isu update baru PUBG Mobile sepi peminat, harga supplier UC sedikit melemah pagi ini.",
+            "💸 Steam Summer Sale kembali digelar! Permintaan Steam Wallet naik gila-gilaan!",
+            "💥 Terjadi error pada sistem payment gateway nasional, transaksi manual sedikit terhambat.",
+            "🎉 Berhasil menjalin kerja sama dengan influencer lokal, reputasimu meningkat!",
+            "🚀 Update patch terbaru meningkatkan minat pemain baru secara global."
+        ];
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            loadGame();
+            initMarket();
+            renderMarket();
+            renderInventory();
+            renderUpgrades();
+            
+            // Start Game Loop
+            setInterval(gameTick, 1000);
+            
+            showToast("🎮 Selamat datang di Top-Up Tycoon! Mulailah membangun kerajaan bisnismu.", "success");
+        };
+
+        // --- LOCAL STORAGE HANDLING ---
+        function saveGame() {
+            localStorage.setItem('topup_tycoon_save', JSON.stringify(state));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('topup_tycoon_save');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Merge properties safely
+                    if (parsed.cash !== undefined) state.cash = parsed.cash;
+                    if (parsed.reputation !== undefined) state.reputation = parsed.reputation;
+                    if (parsed.salesCount !== undefined) state.salesCount = parsed.salesCount;
+                    if (parsed.revenue !== undefined) state.revenue = parsed.revenue;
+                    if (parsed.inventory !== undefined) state.inventory = parsed.inventory;
+                    if (parsed.upgrades !== undefined) {
+                        for (let k in parsed.upgrades) {
+                            if (state.upgrades[k]) {
+                                state.upgrades[k].level = parsed.upgrades[k].level;
+                            }
+                        }
+                    }
+                    state.inventoryCapacity = 100 + (state.upgrades.server.level * 50);
+                    updateVisualStats();
+                } catch (e) {
+                    console.error("Gagal meload progress game lama.", e);
+                }
+            }
+        }
+
+        function resetGame() {
+            if (confirm("Apakah kamu yakin ingin merestart game ini dari awal? Semua saldo dan upgrade akan dihapus!")) {
+                localStorage.removeItem('topup_tycoon_save');
+                location.reload();
+            }
+        }
+
+        // --- CORE GAME LOOP ---
+        function gameTick() {
+            state.marketTimer--;
+            if (state.marketTimer <= 0) {
+                state.marketTimer = 10;
+                fluctuateMarket();
+            }
+            document.getElementById('market-timer').innerText = state.marketTimer + 's';
+
+            state.customerTimer++;
+            let spawnDelay = Math.max(4, 12 - (state.upgrades.promosi.level * 1.5) - (state.reputation * 0.5));
+            if (state.customerTimer >= spawnDelay) {
+                state.customerTimer = 0;
+                spawnCustomer();
+            }
+
+            if (state.upgrades.bot.level > 0 && state.customers.length > 0) {
+                processAutoSales();
+            }
+
+            updateVisualStats();
+        }
+
+        // --- MARKET SYSTEMS ---
+        function initMarket() {
+            for (let key in state.prices) {
+                const conf = itemsConfig[key];
+                const variance = (Math.random() * 0.2) - 0.1;
+                state.prices[key] = Math.round(conf.basePrice * (1 + variance));
+            }
+        }
+
+        function fluctuateMarket() {
+            let newsTriggered = false;
+            let newsMessage = "";
+
+            if (Math.random() < 0.2) {
+                const randIndex = Math.floor(Math.random() * gameNews.length);
+                newsMessage = gameNews[randIndex];
+                newsTriggered = true;
+                document.getElementById('news-ticker').innerText = newsMessage;
+            }
+
+            for (let key in state.prices) {
+                const conf = itemsConfig[key];
+                let changePercent = (Math.random() * 0.16) - 0.08;
+                
+                if (newsTriggered) {
+                    if (newsMessage.includes("MLBB") && key === "diamond") changePercent += 0.15;
+                    if (newsMessage.includes("Valorant") && key === "vp") changePercent += 0.15;
+                    if (newsMessage.includes("PUBG") && key === "uc") changePercent -= 0.10;
+                    if (newsMessage.includes("Steam") && key === "steam") changePercent += 0.20;
+                }
+
+                let newPrice = Math.round(state.prices[key] * (1 + changePercent));
+                newPrice = Math.max(conf.minPrice, Math.min(conf.maxPrice, newPrice));
+
+                state.marketTrends[key] = newPrice > state.prices[key] ? 'up' : (newPrice < state.prices[key] ? 'down' : 'neutral');
+                state.prices[key] = newPrice;
+            }
+
+            renderMarket();
+            saveGame();
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderMarket() {
+            const container = document.getElementById('market-list');
+            container.innerHTML = '';
+
+            for (let key in state.prices) {
+                const conf = itemsConfig[key];
+                const price = state.prices[key];
+                const trend = state.marketTrends[key];
+                
+                let trendIcon = '<i class="fa-solid fa-minus text-slate-500"></i>';
+                let trendClass = 'text-slate-400';
+                let bgBadge = 'bg-slate-900/80';
+
+                if (trend === 'up') {
+                    trendIcon = '<i class="fa-solid fa-circle-arrow-up text-brand-danger"></i>';
+                    trendClass = 'text-brand-danger';
+                    bgBadge = 'bg-red-500/5';
+                } else if (trend === 'down') {
+                    trendIcon = '<i class="fa-solid fa-circle-arrow-down text-brand-accent"></i>';
+                    trendClass = 'text-brand-accent';
+                    bgBadge = 'bg-emerald-500/5';
+                }
+
+                container.innerHTML += `
+                    <div class="bg-slate-900/70 border border-slate-800/80 hover:border-slate-700/60 p-3.5 rounded-xl transition duration-150 flex items-center justify-between ${bgBadge}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800/80 flex items-center justify-center border border-slate-700/50">
+                                <i class="${conf.icon} text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-200">${conf.name}</h3>
+                                <span class="text-[10px] text-slate-400 font-mono">Kemasan: ${conf.unit}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-right flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block uppercase font-mono tracking-wider">Harga Beli</span>
+                                <span class="text-sm font-extrabold font-mono ${trendClass}">
+                                    ${formatRupiah(price)}
+                                </span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center gap-1.5">
+                                ${trendIcon}
+                                <button onclick="buyStock('${key}')" class="bg-brand-accent hover:bg-emerald-400 text-brand-dark font-extrabold text-[10px] px-2 py-1 rounded transition duration-150 shadow-sm">
+                                    BELI
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderInventory() {
+            const container = document.getElementById('inventory-list');
+            container.innerHTML = '';
+
+            let totalInUse = 0;
+            for (let key in state.inventory) {
+                totalInUse += state.inventory[key];
+            }
+
+            const capBadge = document.getElementById('inventory-capacity');
+            capBadge.innerText = `Stok: ${totalInUse}/${state.inventoryCapacity}`;
+            
+            if (totalInUse >= state.inventoryCapacity) {
+                capBadge.className = "text-xs font-mono bg-brand-danger/10 text-brand-danger px-2 py-0.5 rounded-full border border-brand-danger/20";
+            } else {
+                capBadge.className = "text-xs font-mono bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded-full border border-brand-purple/20";
+            }
+
+            for (let key in state.inventory) {
+                const conf = itemsConfig[key];
+                const count = state.inventory[key];
+                const progress = (count / state.inventoryCapacity) * 100;
+
+                container.innerHTML += `
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div class="flex items-center gap-2">
+                                <i class="${conf.icon} text-sm"></i>
+                                <span class="text-xs font-semibold text-slate-300">${conf.name}</span>
+                            </div>
+                            <span class="text-xs font-extrabold font-mono text-slate-200">
+                                ${count} <span class="text-[10px] text-slate-400 font-normal">Porsi</span>
+                            </span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-brand-purple to-purple-400 h-full rounded-full" style="width: ${Math.min(100, progress)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades-list');
+            container.innerHTML = '';
+
+            for (let key in state.upgrades) {
+                const up = state.upgrades[key];
+                const isMax = up.level >= up.max;
+                
+                container.innerHTML += `
+                    <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between gap-3">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-brand-card p-2 rounded-lg border border-slate-700/50 text-brand-purple text-base">
+                                <i class="${up.icon}"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-extrabold text-slate-200">${up.name}</h3>
+                                <p class="text-[10px] text-slate-400 mt-0.5">${up.desc}</p>
+                                <span class="text-[9px] text-slate-400 block mt-1 font-mono">
+                                    Lv: ${up.level}/${up.max}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between border-t border-slate-800/80 pt-2">
+                            <span class="text-xs font-bold text-slate-300 font-mono">
+                                ${isMax ? 'MAX LEVEL' : formatRupiah(up.cost)}
+                            </span>
+                            <button onclick="buyUpgrade('${key}')" ${isMax ? 'disabled' : ''} class="${isMax ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-brand-purple/20 hover:bg-brand-purple text-brand-purple hover:text-white border border-brand-purple/30'} font-bold text-[10px] px-3 py-1.5 rounded-lg transition duration-200">
+                                ${isMax ? 'TERBELI' : 'UPGRADE'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- DEPOSIT SYSTEM FUNCTIONS (NEW) ---
+        function openDepositModal() {
+            resetDepositFlow();
+            document.getElementById('deposit-modal').classList.remove('hidden');
+        }
+
+        function closeDepositModal() {
+            document.getElementById('deposit-modal').classList.add('hidden');
+        }
+
+        function resetDepositFlow() {
+            pendingDepositAmount = 0;
+            document.getElementById('deposit-amount-input').value = '';
+            
+            document.getElementById('deposit-step-input').classList.remove('hidden');
+            document.getElementById('deposit-step-payment').classList.add('hidden');
+            document.getElementById('deposit-step-processing').classList.add('hidden');
+        }
+
+        function goToPaymentStep() {
+            const inputVal = parseInt(document.getElementById('deposit-amount-input').value);
+            
+            if (isNaN(inputVal) || inputVal < 50000) {
+                showToast("❌ Silakan masukkan nominal top-up valid minimal Rp 50.000!", "danger");
+                return;
+            }
+
+            pendingDepositAmount = inputVal;
+            document.getElementById('deposit-target-val').innerText = formatRupiah(pendingDepositAmount);
+
+            document.getElementById('deposit-step-input').classList.add('hidden');
+            document.getElementById('deposit-step-payment').classList.remove('hidden');
+        }
+
+        function copyPaymentNumber() {
+            // Standard copy code compatible inside iframe environments
+            const dummy = document.createElement("input");
+            document.body.appendChild(dummy);
+            dummy.value = "082183684555";
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            
+            showToast("📋 Nomor ShopeePay 082183684555 disalin ke papan klip!", "success");
+        }
+
+        function submitPaymentVerif() {
+            // Hide payment screen & open loader simulation
+            document.getElementById('deposit-step-payment').classList.add('hidden');
+            document.getElementById('deposit-step-processing').classList.remove('hidden');
+
+            // 3 seconds checking simulation
+            setTimeout(() => {
+                // Add deposit funds to game state
+                state.cash += pendingDepositAmount;
+                
+                // Show achievement / notification splash
+                closeDepositModal();
+                updateVisualStats();
+                saveGame();
+
+                openMilestoneModal(
+                    "💰 Top-Up Berhasil Masuk!",
+                    `Deposit game senilai <b>${formatRupiah(pendingDepositAmount)}</b> telah sukses diterima via pembayaran <b>ShopeePay (082183684555)</b>.<br><br>Selamat mengelola modal barumu!`,
+                    "bg-brand-shopee/20 text-brand-shopee border border-brand-shopee/30 animate-bounce",
+                    "🚀"
+                );
+            }, 3000);
+        }
+
+        // --- INVENTORY PURCHASING ENGINE ---
+        function buyStock(itemKey) {
+            const price = state.prices[itemKey];
+            
+            if (state.cash < price) {
+                showToast("❌ Saldo tunai Anda tidak mencukupi untuk membeli stok ini!", "danger");
+                return;
+            }
+
+            let currentInUse = 0;
+            for (let key in state.inventory) {
+                currentInUse += state.inventory[key];
+            }
+
+            if (currentInUse >= state.inventoryCapacity) {
+                showToast("❌ Kapasitas gudang penuh! Silakan upgrade Server atau jual stok.", "danger");
+                return;
+            }
+
+            state.cash -= price;
+            state.inventory[itemKey]++;
+            
+            showToast(`📦 Berhasil membeli 1 stok ${itemsConfig[itemKey].name} seharga ${formatRupiah(price)}!`, "success");
+            
+            renderInventory();
+            updateVisualStats();
+            saveGame();
+        }
+
+        // --- UPGRADE ENGINE ---
+        function buyUpgrade(upgradeKey) {
+            const up = state.upgrades[upgradeKey];
+            
+            if (up.level >= up.max) {
+                showToast("❌ Upgrade ini sudah berada di tingkat maksimal!", "danger");
+                return;
+            }
+
+            if (state.cash < up.cost) {
+                showToast("❌ Saldo tunai tidak mencukupi untuk melakukan upgrade!", "danger");
+                return;
+            }
+
+            state.cash -= up.cost;
+            up.level++;
+
+            if (upgradeKey === 'server') {
+                state.inventoryCapacity = 100 + (up.level * 50);
+            }
+            if (upgradeKey === 'bot') {
+                document.getElementById('auto-seller-badge').className = "text-xs font-medium px-2 py-1 rounded bg-brand-purple/10 text-brand-purple border border-brand-purple/20 flex items-center gap-1.5";
+                document.getElementById('auto-seller-badge').innerHTML = '<i class="fa-solid fa-robot animate-bounce"></i> Bot Auto-Process Aktif';
+            }
+
+            up.cost = Math.round(up.cost * 1.8);
+
+            showToast(`⚡ Sukses upgrade ${up.name} ke Level ${up.level}!`, "success");
+
+            renderUpgrades();
+            renderInventory();
+            updateVisualStats();
+            saveGame();
+        }
+
+        // --- CUSTOMER LOGIC & QUEUES ---
+        function spawnCustomer() {
+            if (state.customers.length >= 4) return;
+
+            const itemKeys = Object.keys(itemsConfig);
+            const randItemKey = itemKeys[Math.floor(Math.random() * itemKeys.length)];
+            const conf = itemsConfig[randItemKey];
+            const qty = Math.floor(Math.random() * 3) + 1;
+            const name = randomNames[Math.floor(Math.random() * randomNames.length)] + " #" + Math.floor(100 + Math.random() * 900);
+            const margin = 0.15 + (state.reputation * 0.05) + (Math.random() * 0.10);
+            const targetPrice = Math.round(conf.basePrice * qty * (1 + margin));
+
+            const newCustomer = {
+                id: Date.now() + Math.random().toString(36).substr(2, 5),
+                name: name,
+                itemKey: randItemKey,
+                quantity: qty,
+                priceOffer: targetPrice,
+                timeLeft: 30,
+                avatarSeed: Math.floor(Math.random() * 100)
+            };
+
+            state.customers.push(newCustomer);
+            renderCustomers();
+        }
+
+        function renderCustomers() {
+            const container = document.getElementById('customer-area');
+            const emptyState = document.getElementById('empty-customers');
+            const currentCards = container.querySelectorAll('.customer-card-item');
+            currentCards.forEach(c => c.remove());
+
+            if (state.customers.length === 0) {
+                emptyState.style.display = 'block';
+                document.getElementById('queue-count').innerText = "0";
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            document.getElementById('queue-count').innerText = state.customers.length;
+
+            state.customers.forEach((cust) => {
+                const conf = itemsConfig[cust.itemKey];
+                const hasStok = state.inventory[cust.itemKey] >= cust.quantity;
+                
+                const indicatorColor = hasStok ? 'border-brand-accent/50' : 'border-slate-800';
+                const statusBadge = hasStok 
+                    ? '<span class="text-[9px] font-bold bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/20">STOK ADA</span>' 
+                    : '<span class="text-[9px] font-bold bg-brand-danger/10 text-brand-danger px-1.5 py-0.5 rounded border border-brand-danger/20">STOK KURANG</span>';
+
+                const cardHtml = `
+                    <div class="customer-card-item w-full bg-slate-900/90 border ${indicatorColor} p-4 rounded-xl shadow-lg relative flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300 transform hover:scale-[1.01]">
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 text-lg font-bold text-brand-purple">
+                                👤
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-xs font-bold text-slate-200">${cust.name}</h4>
+                                    ${statusBadge}
+                                </div>
+                                <p class="text-[11px] text-slate-400 mt-0.5">
+                                    Butuh: <span class="font-bold text-white">${cust.quantity}x</span> ${conf.name}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
+                            <div class="text-left md:text-right">
+                                <span class="text-[10px] text-slate-500 block uppercase font-mono">Tawaran Pembelian</span>
+                                <span class="text-sm font-extrabold font-mono text-brand-gold">
+                                    ${formatRupiah(cust.priceOffer)}
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="declineCustomer('${cust.id}')" class="bg-slate-800/90 hover:bg-red-500/10 hover:text-red-400 border border-slate-700 hover:border-red-500/20 px-3 py-2 rounded-lg text-xs font-semibold transition duration-150">
+                                    Tolak
+                                </button>
+                                <button onclick="serveCustomer('${cust.id}')" class="bg-brand-accent hover:bg-emerald-400 text-brand-dark font-extrabold px-4 py-2 rounded-lg text-xs transition duration-150 shadow-md">
+                                    PROSES
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // --- SERVING TRANSACTION SYSTEM ---
+        function serveCustomer(id) {
+            const index = state.customers.findIndex(c => c.id === id);
+            if (index === -1) return;
+
+            const cust = state.customers[index];
+            
+            if (state.inventory[cust.itemKey] < cust.quantity) {
+                showToast(`❌ Stok ${itemsConfig[cust.itemKey].name} tidak cukup untuk melayani ${cust.name}!`, "danger");
+                return;
+            }
+
+            state.inventory[cust.itemKey] -= cust.quantity;
+            state.cash += cust.priceOffer;
+            state.revenue += cust.priceOffer;
+            state.salesCount++;
+
+            if (state.reputation < 5.0) {
+                state.reputation = parseFloat((state.reputation + 0.05).toFixed(2));
+            }
+
+            if (cust.priceOffer >= 100000) {
+                openMilestoneModal(
+                    "🔥 Transaksi Sukses Gede!", 
+                    `Luar biasa! Tokomu berhasil melayani <b>${cust.name}</b> sebanyak <b>${cust.quantity}x</b> pesanan. Keuntungan bersih telah masuk saldo.`, 
+                    "bg-brand-accent/20 text-brand-accent border border-brand-accent/30",
+                    "💰"
+                );
+            } else {
+                showToast(`💰 Sukses melayani ${cust.name}! +${formatRupiah(cust.priceOffer)}`, "success");
+            }
+
+            state.customers.splice(index, 1);
+            
+            renderCustomers();
+            renderInventory();
+            updateVisualStats();
+            saveGame();
+        }
+
+        function declineCustomer(id) {
+            const index = state.customers.findIndex(c => c.id === id);
+            if (index === -1) return;
+
+            if (state.reputation > 1.0) {
+                state.reputation = parseFloat((state.reputation - 0.02).toFixed(2));
+            }
+
+            state.customers.splice(index, 1);
+            showToast("⚠️ Transaksi dibatalkan secara manual.", "info");
+            
+            renderCustomers();
+            updateVisualStats();
+            saveGame();
+        }
+
+        // --- BOT AUTO-PROCESS SYSTEM ---
+        function processAutoSales() {
+            let processedAny = false;
+
+            for (let i = state.customers.length - 1; i >= 0; i--) {
+                const cust = state.customers[i];
+
+                if (state.inventory[cust.itemKey] >= cust.quantity) {
+                    state.inventory[cust.itemKey] -= cust.quantity;
+                    state.cash += cust.priceOffer;
+                    state.revenue += cust.priceOffer;
+                    state.salesCount++;
+
+                    if (state.reputation < 5.0) {
+                        state.reputation = parseFloat((state.reputation + 0.05).toFixed(2));
+                    }
+
+                    showToast(`🤖 [BOT] Otomatis memproses ${cust.name} (+${formatRupiah(cust.priceOffer)})`, "success");
+                    state.customers.splice(i, 1);
+                    processedAny = true;
+                }
+            }
+
+            if (processedAny) {
+                renderCustomers();
+                renderInventory();
+                updateVisualStats();
+                saveGame();
+            }
+        }
+
+        // --- STATS REFRESHER ---
+        function updateVisualStats() {
+            document.getElementById('stat-cash').innerText = formatRupiah(state.cash);
+            
+            let tierName = "Pemula";
+            if (state.reputation >= 4.0) tierName = "Raja Top-up";
+            else if (state.reputation >= 3.0) tierName = "Grosir Ternama";
+            else if (state.reputation >= 2.0) tierName = "Konter Langganan";
+
+            document.getElementById('stat-reputation').innerText = `★ ${state.reputation.toFixed(1)} (${tierName})`;
+            document.getElementById('stat-sales-count').innerText = state.salesCount;
+            document.getElementById('stat-revenue').innerText = formatRupiah(state.revenue);
+        }
+
+        // --- UTILITY: CURRENCY FORMATTER ---
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // --- CUSTOM MODERN TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            
+            let bgClass = "bg-brand-card border-slate-700/60";
+            if (type === 'success') bgClass = "bg-brand-card border-brand-accent/30 text-brand-accent";
+            if (type === 'danger') bgClass = "bg-brand-card border-brand-danger/30 text-brand-danger";
+            if (type === 'info') bgClass = "bg-brand-card border-brand-purple/30 text-brand-purple";
+
+            const toast = document.createElement('div');
+            toast.className = `p-3.5 rounded-xl border ${bgClass} text-xs font-semibold shadow-2xl flex items-center justify-between gap-3 transform translate-y-2 opacity-0 transition-all duration-300`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span>${message}</span>
+                </div>
+                <button class="text-slate-400 hover:text-white" onclick="this.parentElement.remove()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Auto Remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // --- MODERN INFO DIALOG MODAL ---
+        function openMilestoneModal(title, desc, styleClasses, icon) {
+            const modal = document.getElementById('custom-modal');
+            const iconContainer = document.getElementById('modal-icon-container');
+            
+            document.getElementById('modal-title').innerHTML = title;
+            document.getElementById('modal-desc').innerHTML = desc;
+            
+            iconContainer.className = `w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 text-3xl ${styleClasses}`;
+            iconContainer.innerText = icon;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+
+```
